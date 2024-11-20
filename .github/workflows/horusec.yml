@@ -15,36 +15,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install and Configure Docker
-        run: |
-          curl -fsSL https://get.docker.com -o get-docker.sh
-          sudo sh get-docker.sh
-          sudo systemctl start docker
-          sudo chmod 666 /var/run/docker.sock
-
-      - name: Inspect Docker Installation
-        run: |
-          docker --version
-          sudo docker ps || echo "Docker not running"
-
-      - name: Inspect Docker Socket Permissions
-        run: |
-          ls -l /var/run/docker.sock
-          sudo chmod 666 /var/run/docker.sock
-          ls -l /var/run/docker.sock
-
-      - name: Install Horusec
-        run: |
-          curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/main/deployments/scripts/install.sh | bash -s latest
-
-      - name: Run Horusec Analysis
-        run: |
-          export DOCKER_HOST=unix:///var/run/docker.sock
-          docker info
-          horusec start -p="./" -e="true" --log-level="info" --output-format="json" --json-output-file="horusec-analysis.json"
-
-      - name: Upload Analysis Results
-        uses: actions/upload-artifact@v3
+      - name: Run Horusec
+        id: run_horusec
+        uses: fike/horusec-action@v0.2.2
         with:
-          name: horusec-analysis-results
-          path: horusec-analysis.json
+          arguments: -c=horusec-config.json -p ./
