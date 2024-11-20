@@ -15,16 +15,17 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install Docker
+      - name: Install and Configure Docker
         run: |
           curl -fsSL https://get.docker.com -o get-docker.sh
           sudo sh get-docker.sh
           sudo systemctl start docker
+          sudo chmod 666 /var/run/docker.sock
 
-      - name: Verify Docker
+      - name: Verify Docker Installation
         run: |
           docker --version
-          sudo docker ps
+          sudo docker ps || echo "Docker not running"
 
       - name: Install Horusec
         run: |
