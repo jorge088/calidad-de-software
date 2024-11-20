@@ -40,6 +40,7 @@ jobs:
       - name: Run Horusec Analysis
         run: |
           export DOCKER_HOST=unix:///var/run/docker.sock
+          docker info
           horusec start -p="./" -e="true" --log-level="info" --output-format="json" --json-output-file="horusec-analysis.json"
 
       - name: Upload Analysis Results
