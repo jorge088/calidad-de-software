@@ -22,10 +22,16 @@ jobs:
           sudo systemctl start docker
           sudo chmod 666 /var/run/docker.sock
 
-      - name: Verify Docker Installation
+      - name: Inspect Docker Installation
         run: |
           docker --version
           sudo docker ps || echo "Docker not running"
+
+      - name: Inspect Docker Socket Permissions
+        run: |
+          ls -l /var/run/docker.sock
+          sudo chmod 666 /var/run/docker.sock
+          ls -l /var/run/docker.sock
 
       - name: Install Horusec
         run: |
@@ -33,6 +39,7 @@ jobs:
 
       - name: Run Horusec Analysis
         run: |
+          export DOCKER_HOST=unix:///var/run/docker.sock
           horusec start -p="./" -e="true" --log-level="info" --output-format="json" --json-output-file="horusec-analysis.json"
 
       - name: Upload Analysis Results
